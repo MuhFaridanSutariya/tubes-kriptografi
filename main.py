@@ -6,6 +6,7 @@ import docx
 import PyPDF2
 import io
 from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 from openpyxl import load_workbook
 
 
@@ -143,11 +144,14 @@ if uploaded_file is not None:
                     file_type = "application/pdf"
                     file_extension = "pdf"
                     output_pdf = io.BytesIO()
-                    pdf = canvas.Canvas(output_pdf)
-                    y_coordinate = 800 
-                    for _, output_msg in processed_output:
-                        pdf.drawString(100, y_coordinate, output_msg)
-                        y_coordinate -= 20 
+                    pdf = canvas.Canvas(output_pdf, pagesize=(800, 8000))
+                    y_coordinate = 8000 
+                    for input_msg, output_msg in processed_output:
+                        lines = output_msg.split('\n')
+                        pdf.setFont("Helvetica", 8)
+                        for line in lines:
+                            pdf.drawString(20, y_coordinate, line)
+                            y_coordinate -= 20
                     pdf.save()
                     output_pdf.seek(0)
                     data = output_pdf 
